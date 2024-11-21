@@ -1,0 +1,47 @@
+public class InvoiceCreation {
+
+    public static void OpportunityClosedwonInvoiceGeneration(List<Opportunity> lstOpportunity, Map<Id,Opportunity>OldMapOpportunity){
+
+        set<Id> oppIds = new Set<Id>();    
+
+        For(Opportunity opp : lstOpportunity){
+
+            if(Opp.StageName == 'Closed Won' && OldMapOpportunity.get(opp.Id).StageName != opp.StageName){     
+
+                oppIds.add(opp.Id);    
+
+            }
+
+        }
+
+        List<Opportunity_Automobile__c> lstOpportunityAutomobile = [SELECT Unit_Price__c, Total_Price__c, Automobile__c, Quantity__c,Opportunity__c, Id FROM Opportunity_Automobile__c WHERE Opportunity__c IN: oppIds];
+
+        List<Invoice__c> lstInvoice = new List<Invoice__c>();
+
+        For(Opportunity_Automobile__c oppAuto : lstOpportunityAutomobile){
+
+            Invoice__c i = new Invoice__c();
+
+            i.Quantity__c = oppAuto.Quantity__c;
+
+            i.Unit_Price__c = oppAuto.Unit_Price__c;
+
+            i.Total_Price__c = oppAuto.Total_Price__c;
+
+            i.Purchase_Date__c = date.today();
+
+            i.Opportunity__c = oppAuto.Opportunity__c;
+
+            lstInvoice.add(i);
+
+        }
+
+        if(!lstInvoice.isempty()){
+
+            insert lstInvoice;
+
+        }       
+
+    }
+
+}
